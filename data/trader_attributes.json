@@ -1,0 +1,11 @@
+{
+    "Safe_Sam": {
+        "decision_threshold": -0.135
+    },
+    "Optimal_Owen": {
+        "decision_threshold": 0.0
+    },
+    "Brave_Beth": {
+        "decision_threshold": 0.054
+    }
+}
