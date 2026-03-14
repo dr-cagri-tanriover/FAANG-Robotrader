@@ -174,7 +174,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "gradio", specifier = ">=6.8.0" },
+    { name = "gradio", specifier = ">=6.9.0" },
     { name = "gradio-client", specifier = ">=2.3.0" },
 ]
 
