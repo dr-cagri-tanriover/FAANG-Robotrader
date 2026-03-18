@@ -1,11 +1,20 @@
 {
-    "Safe_Sam": {
-        "decision_threshold": -0.135
-    },
-    "Optimal_Owen": {
-        "decision_threshold": 0.0
-    },
-    "Brave_Beth": {
-        "decision_threshold": 0.054
+    "next_trade_date": "2014-01-01",
+    "investors": {
+        "Safe_Sam": {
+            "decision_threshold": -0.135,
+            "cash_allocated": 500000,
+            "trade_log_file": "Safe_Sam.csv"
+        },
+        "Optimal_Owen": {
+            "decision_threshold": 0.0,
+            "cash_allocated": 500000,
+            "trade_log_file": "Optimal_Owen.csv"
+        },
+        "Brave_Beth": {
+            "decision_threshold": 0.054,
+            "cash_allocated": 500000,
+            "trade_log_file": "Brave_Beth.csv"
+        }
     }
 }
