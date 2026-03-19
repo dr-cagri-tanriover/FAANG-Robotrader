@@ -312,14 +312,3 @@ if __name__ == "__main__":
     ### Note 2: Check the last line of trade in log file. If it is the same as current trade date, skip the trade for this round (happens on holidays!)
     ### Note 3: If this investor has insufficient cash left AND the Action is a BUY, buy as much as possible and then perform a HOLD action instead.
     ### Close the updated trade log file for this investor.
-
-    ## Advance "next_trade_date" by 1 day, update "trader_attributes.json" file with the new "next_trade_date"
-
-
-    # Visualization and report out logic (will be driven by the gradio UI)
-    ## Create a dropdown for each investor listed in "trader_attributes.json"
-    ### Display time related trading info for this investor (e.g., start/end dates, number of total, HOLD, SELL and BUY trade days)
-    ### Display cash related info for this investor. (e.g., total start cash, current value of shares owned, total cash left)
-    ### Display returns for each FAANG stock (e.g. for each stock: total spent via BUY actions, total return via SELL actions, %return = (SELL-BUY)/BUY)
-
-    #Date,Ticker,Price,Direction,Action,Shares,Cash Before Trade,Cash After Trade
