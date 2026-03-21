@@ -4,12 +4,11 @@ from gradio_client import Client
 import pandas as pd
 from datetime import datetime, timedelta
 import json
-import csv
+import random
 
 DATA_DIR = Path(__file__).parent / "data"
 
 TRADER_ATTRIBUTES_FILE = DATA_DIR / "trader_attributes.json"
-
 
 class TradingEngine:
     def __init__(self):
@@ -25,7 +24,7 @@ class TradingEngine:
 
 
     def get_stock_prices(self, tickers:list[str], date:str):
-        tickers_list = self.ticker_map.keys()  # tickers for all supported stocks
+        #tickers_list = self.ticker_map.keys()  # tickers for all supported stocks
         
         result = self.api_client.predict(
             stock_ticker_list=tickers,
@@ -81,7 +80,8 @@ class TradingEngine:
         investor_strategy_map = {
             "Safe_Sam": self.safe_strategy,
             "Optimal_Owen": self.optimal_strategy,
-            "Brave_Beth": self.brave_strategy
+            "Brave_Beth": self.brave_strategy,
+            "Random_Randy": self.random_strategy
         }
 
         return investor_strategy_map[investor_name]
@@ -243,12 +243,62 @@ class TradingEngine:
         }
 
         # Following is the common trading logic for all investors.
-        new_row = self.build_new_transaction_row(new_row,df_log, investor_name, max_shares_to_buy, max_shares_to_sell)
+        new_row = self.build_new_transaction_row(new_row, df_log, investor_name, max_shares_to_buy, max_shares_to_sell)
 
         # New transaction log created.
         df_log.loc[len(df_log)] = new_row  # Added to the end of df_log dataframe
         
         return df_log
+
+
+    def random_strategy(self, investor_name:str, ticker: str, stock_prices:dict, date: str, predicted_trend:str, df_log:pd.DataFrame):
+        """
+        Random Randy strategy:
+        - If date is the same as the last trade date in log, do nothing and exit the function. (this happens when markets are closed!)
+        - A random seed is generated using the "date" argument. 
+        - The predicted trend is randomly selected from TREND_UP, TREND_DOWN AND  NO_TRENDB. Incoming predicted_trend is ignored!
+        - else if the predicted trend is TREND_DOWN SELL 10 shares.
+        - else (if NO_TREND) HOLD the position.
+
+        The BUY actions will be executed ONLY if there is enough cash available. If not, BUY as much as possible and then HOLD the position.
+        """
+
+        # If date is the same as the last trade date in log AND the ticker is the same as the last trade ticker,
+        # then do nothing and exit the function. (this happens when markets are closed!)
+        if date in df_log[df_log['Ticker']==ticker]['Date'].values:
+            return df_log
+
+        ticker_seed = sum([ord(char) for char in ticker])  # To make sure random seed is a function of ticker symbol
+        dateFormatted = datetime.strptime(date, "%Y-%m-%d")
+        random_seed = dateFormatted.year + dateFormatted.month + dateFormatted.day + ticker_seed  # random seed is a function of date and ticker symbol!
+        random.seed(random_seed)  # will be incremented by 1 for each new trade
+
+        rand_predicted_trend = random.choice(["TREND_UP", "TREND_DOWN", "NO_TREND"])
+        max_shares_to_buy, max_shares_to_sell = random.randint(1, 20), random.randint(1, 20)  # random selection of shares to sell/buy within a range
+
+        price_per_share = stock_prices[ticker]["Close"]  # We use (Adjusted) Close price to calculate the cost of the trade
+
+        # Initialize new row for the transaction log.
+        # Following columns will be added to df_log regardless of the action taken.
+        new_row = {
+            "Date": date,
+            "Ticker": ticker,
+            "Price": price_per_share,
+            "Direction": rand_predicted_trend,  # will be used to execute the trade randomly below
+            "Action": "NONE"  # initialized to an invalid entry to simplify code below.
+        }
+
+        # Following is the common trading logic for all investors.
+        new_row = self.build_new_transaction_row(new_row, df_log, investor_name, max_shares_to_buy, max_shares_to_sell)
+
+        # EXCEPTION FOR RANDOM TRADE: After the random trade is logged, the predicted trend is updated to the actual trend for correct comparison with other traders.
+        new_row["Direction"] = predicted_trend
+
+        # New transaction log created.
+        df_log.loc[len(df_log)] = new_row  # Added to the end of df_log dataframe
+        
+        return df_log
+
 
 
 def live_trading():
@@ -270,7 +320,7 @@ def test_trading():
     tickers_list = list(trading_engine.ticker_map.keys())  # price data for all available stock tickers requested
     date_selected = trading_engine.trader_attributes["next_trade_date"]  # trade date of interest as string
 
-    num_days_to_trade = 10
+    num_days_to_trade = 15
     day_counter = 0
 
     while day_counter < num_days_to_trade:
@@ -293,22 +343,3 @@ if __name__ == "__main__":
     live_trading()
     #test_trading()
 
-
-    # Initializations:
-    ## Stock tickers and their gradio dropdown string values.
-    ## Read "trader_attributes.json" assign content to object variable
-    ## ? A variable for backtesting or live testing mode.
-
-    # Trade execution and update logic
-    ## Get "next_trade_date" from "trader_attributes.json"
-    ## Fetch stock data for all tickers for the "next_trade_date" over FAANG Pulse AI API (/get_prices_on_date)
-    
-    ## Run trade execution logic for each investor listed in "trader_attributes.json"
-    ### For this investor, call /run_trend_prediction API to get the prediction result for each of the FAANG stocks.
-    ### Run trading logic for this investor using the prediction result.
-    ### Open this investor's current *.csv trade log file (find file name in "trader_attributes.json")
-    ### According to this investor's trading strategy, perform trade for each of the FAANG stocks by adding new line for each stock ticker
-    ### Note 1: The valid Actions are: HOLD, BUY, SELL
-    ### Note 2: Check the last line of trade in log file. If it is the same as current trade date, skip the trade for this round (happens on holidays!)
-    ### Note 3: If this investor has insufficient cash left AND the Action is a BUY, buy as much as possible and then perform a HOLD action instead.
-    ### Close the updated trade log file for this investor.
