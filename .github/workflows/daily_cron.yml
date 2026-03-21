@@ -31,3 +31,9 @@ jobs:
           git add data/*.csv
           git commit -m "Daily trade update: $(date -u +'%Y-%m-%d, %T (UTC)')" || exit 0
           git push
+
+      - name: Trigger HF Sync
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run sync_to_hf.yml --ref main
