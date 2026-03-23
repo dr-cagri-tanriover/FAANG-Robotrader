@@ -47,13 +47,13 @@ class investmentRecords:
     def get_trade_actions_df(self):
         """
         Create a dataframe with the time related trading info for all investors.
-        Columns: Investor, Start Date, End Date, HOLD Trades (%), SELL Trades (%), BUY Trades (%)
+        Columns: Investor, Start Date, End Date, HOLD Trades (%), SELL Trades (%), BUY Trades (%), Shares Owned
         Rows: Each investor
-        Values: Start Date, End Date, HOLD Trades (%), SELL Trades (%), BUY Trades (%)
+        Values: Start Date, End Date, HOLD Trades (%), SELL Trades (%), BUY Trades (%), Shares Owned
         Returns: Dataframe with the time related trading info for all investors
         """
 
-        columns = ["Investor", "Start Date", "End Date", "HOLD Trades (%)", "SELL Trades (%)", "BUY Trades (%)"]
+        columns = ["Investor", "Start Date", "End Date", "HOLD Trades (%)", "SELL Trades (%)", "BUY Trades (%)", "Shares Owned"]
 
         df = pd.DataFrame(columns=columns)
 
@@ -66,7 +66,8 @@ class investmentRecords:
                     "End Date": "N/A",
                     "HOLD Trades (%)": "0 (0.00)",
                     "SELL Trades (%)": "0 (0.00)",
-                    "BUY Trades (%)": "0 (0.00)"
+                    "BUY Trades (%)": "0 (0.00)",
+                    "Shares Owned": 0
                 }
             else:
                 # There is investor data to process
@@ -74,13 +75,17 @@ class investmentRecords:
                 hold_trades = (self.dfDict[trader]["Action"] == "HOLD").sum()
                 sell_trades = (self.dfDict[trader]["Action"] == "SELL").sum()
                 buy_trades = (self.dfDict[trader]["Action"] == "BUY").sum()
+
+                total_shares_bought = self.dfDict[trader][self.dfDict[trader]["Action"] == "BUY"]["Shares"].sum()
+                total_shares_sold = self.dfDict[trader][self.dfDict[trader]["Action"] == "SELL"]["Shares"].sum()
                 new_row = {
                     "Investor": trader,
                     "Start Date": self.dfDict[trader]["Date"].iloc[0],  # first date record
                     "End Date": self.dfDict[trader]["Date"].iloc[-1],  # last date record
                     "HOLD Trades (%)": f"{hold_trades} ({(hold_trades/total_trades)*100:.2f})",
                     "SELL Trades (%)": f"{sell_trades} ({(sell_trades/total_trades)*100:.2f})",
-                    "BUY Trades (%)": f"{buy_trades} ({(buy_trades/total_trades)*100:.2f})"
+                    "BUY Trades (%)": f"{buy_trades} ({(buy_trades/total_trades)*100:.2f})",
+                    "Shares Owned": (total_shares_bought - total_shares_sold)
                 }
 
             df.loc[len(df)] = new_row  # append to the end of the data frame
@@ -221,12 +226,12 @@ class investmentRecords:
     def get_per_stock_returns_df(self):
         """
         Create a dataframe with the per stock returns info for all investors.
-        Columns: Investor, Ticker, Start Date, End Date, Buy Total ($), Sell Total ($), Projected Return ($ (%))
+        Columns: Investor, Ticker, Start Date, End Date, Shares Owned, Buy Total ($), Sell Total ($), Projected Return ($ (%))
         Rows: Each stock
-        Values: Investor, Ticker, Start Date, End Date, Buy Total ($), Sell Total ($), Projected Return ($ (%))
+        Values: Investor, Ticker, Start Date, End Date, Shares Owned, Buy Total ($), Sell Total ($), Projected Return ($ (%))
         Returns: Dataframe with the per stock returns info for all investors
         """
-        columns = ["Investor", "Ticker", "Start Date", "End Date", "Buy Total ($)", "Sell Total ($)", "Projected Return ($ (%))"]
+        columns = ["Investor", "Ticker", "Start Date", "End Date", "Shares Owned", "Buy Total ($)", "Sell Total ($)", "Projected Return ($ (%))"]
 
         df = pd.DataFrame(columns=columns)
 
@@ -238,6 +243,7 @@ class investmentRecords:
                     "Ticker": "N/A",
                     "Start Date": "N/A",
                     "End Date": "N/A",
+                    "Shares Owned": 0,
                     "Buy Total ($)": "0.00",
                     "Sell Total ($)": "0.00",
                     "Projected Return ($ (%))": "0.00 (0.00)"
@@ -262,7 +268,8 @@ class investmentRecords:
                 total_shares_sold = sub_df["Shares"].sum()
 
                 last_price_for_ticker = self.dfDict[trader][(self.dfDict[trader]["Ticker"] == ticker)]["Price"].iloc[-1]  # Last pricer for ticker at the end of the transaction record
-                unrealized_earnings = (total_shares_bought - total_shares_sold)*last_price_for_ticker
+                total_shares_owned = total_shares_bought - total_shares_sold
+                unrealized_earnings = total_shares_owned*last_price_for_ticker
 
                 projected_return = unrealized_earnings + total_earned_on_sell - total_spent_on_buy
 
@@ -276,6 +283,7 @@ class investmentRecords:
                     "Ticker": ticker,
                     "Start Date": self.dfDict[trader]["Date"].iloc[0],
                     "End Date": self.dfDict[trader]["Date"].iloc[-1],
+                    "Shares Owned": total_shares_owned,
                     "Buy Total ($)": f"{total_spent_on_buy:.2f}",
                     "Sell Total ($)": f"{total_earned_on_sell:.2f}",
                     "Projected Return ($ (%))": f"{projected_return:.2f} ({projected_return_percentage:.2f})"
