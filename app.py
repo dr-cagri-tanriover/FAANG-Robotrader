@@ -37,13 +37,16 @@ def update_chart_display(selected_chart):
 with gr.Blocks(theme=gr.themes.Soft(), css=css) as dashboard:
     # The wrapper for everything in the launched demo.
 
-    gr.Markdown("# FAANG Robotrader - *Random Randy, Safe Sam, Optimal Owen & Brave Beth's Race to the Top!*")
+    gr.Markdown("# FAANG Robotrader - *Pursuit of Wealth by Investors Random Randy, Safe Sam, Optimal Owen & Brave Beth !*")
 
-    gr.Markdown("""## Watch how well four different investors each with $500K budget perform in the real world using my Robotrader based on <a href="https://huggingface.co/spaces/ML-Owl/FAANG-Pulse-AI" target="_blank">FAANG Pulse AI !</a>
-    
+    gr.Markdown("""## Watch how well four different investors each with $500K budget perform in the real world using my Robotrader based on <a href="https://huggingface.co/spaces/ML-Owl/FAANG-Pulse-AI" target="_blank">FAANG Pulse AI !</a>""")
+
+    gr.Markdown("""## Be sure to <a href="https://huggingface.co/spaces/ML-Owl/FAANG-Robotrader/blob/main/README.md" target="_blank">read the documentation</a> to understand how the Robotrader works and how the 4 investors use it to make money from FAANG shares.""")
+
+
     ### 📣 Stay tuned for updates!!!""")
     
-    # Performance chart dropdown row
+    # Performance chart dropdown rowread the documentation to understand how the Robotrader works and how the 4 investors use it.
     with gr.Row():
         gr.Column(scale=2)  # empty column on row for left spacing
         with gr.Column(scale=1):  # 20% of full width
