@@ -26,6 +26,7 @@ Top level architecture of the robotrader is shown in [Figure 1](#fig1-arch-diagr
 <div align=center>
 
 <a id="fig1-arch-diagram"></a>
+
 #### Figure 1 - System Architecture
 
 <img src="docs/Robotrader_diagram.png" alt="Robotrader diagram" width="80%" />
@@ -61,18 +62,49 @@ Thanks to the above two workflows, the Github repository and Hugging Face reposi
 
 - **Trading Logic:** This is the part that is auto-executed once a day to fetch the current prices for FAANG stocks and to execute BUY, SELL, or HOLD actions for each investor depending on the risk tolerance and the investment strategy defined for each. This module also keeps track of each trade transaction of each trader in a dedicated \*csv file, which is the central source of information the user interface uses to generate a number of evaluation reports.
 
-    As described in the workflow section above, the trading logic is called and executed on Github repository automatically, which also does not use any Hugging Face compute resources. 😉 Once the required computations are completed on Github, the updated \*.csv files are simply pushed to the Hugging Face repository to keep everything in sync.
+    As described in the workflow section above, the trading logic is called and executed on Github repository automatically, which also does not use any Hugging Face compute resources. 😉 Once the required computations are completed on Github, the updated \*.csv files are simply pushed to Hugging Face repository to keep everything in sync.
 
-- **The User Interface (GUI):** The user interface is the mechanism whereby the trade log of each investor is evaluated by a few generated reports. Please note the actions performed on the GUI use the information provided in each \*.csv file, which is updated once daily by the Trading Logic process.
+- **The User Interface (GUI):** The user interface is the mechanism whereby the trade log of each investor is evaluated by generated reports on demand. Please note the actions performed on the GUI use the information provided in each \*.csv file, which is updated once daily by the Trading Logic process.
 
+    The GUI is intentionally kept simple with one interactive drop down menu for the user. Each menu selection triggers the generation of a table that is displayed below the drop down menu. Next let's take a close look at each menu item and see how to interpret the information displayed on each displayed table.
 
-- GUI and the trading logic sub-systems
+    - **Trade Actions Summary:** This option generates a table with a high level view of the executed trades for each investor by the robotrader. Table includes the following columns:
+        - ***Investor***: Includes the name of investors.
+        - ***Start Date***: This is the date of the first trade transaction for an investor. We expect this to be the same for all investors to allow a fair comparison.
+        - ***End Date***: This is the last date on the transaction record for an investor. End Date for all investors is expected to be the same and is updated each day.
+        - ***HOLD Trades (%)***: For this column two information fields per cell are included. The first one gives the total count of all HOLD transactions executed while the second one in paranthesis is the percentage of HOLD trades for the investor. Note this count is an aggregation of all of the 5 FAANG stock transactions for the investor.
+        - ***SELL Trades (%)***: This is the same as HOLD column but exclusively for all the SELL transactions for an investor.
+        - ***BUY Trades (%)***: This is the same as HOLD and SELL columns but exclusively for all the BUY transactions for an investor.
+        - ***Shares Owned***: The total number of all FAANG shares owned on the End Date for an investor are listed in this column.
+
+    - **Cash Status:** This is the second option in the drop down menu, which generates a table summarizing the cash outlook of each investor. Following columns are included in this table.
+        - ***Investor***: Includes the name of investors.
+        - ***Start Date***: This is the date of the first trade transaction for an investor. We expect this to be the same for all investors to allow a fair comparison.
+        - ***End Date***: This is the last date on the transaction record for an investor. End Date for all investors is expected to be the same and is updated each day.
+        - ***Starting Cash ($)***: Each investor's starting cash allocation for the robotrade is listes in US Dollars in this column. The starting cash is fixed at $500,000 for each investor for a fair comparison.
+        - ***Value of Shares Owned ($)***: This is the combined dollar amount for all owned FAANG shares by an investor calculated based on the End Date sell price for each stock.
+        - ***Investable Cash ($)***: The remaining cash that is left for investing from the Starting Cash amount (after all the the buy and sell trades until the End Date)
+        - ***Portfolio Value ($)***: This is the dollar amount of the Value of Shares owned and the Investable Cash. When this amount exceeds the Starting Cash, an investor will have positive ROI.
+        - ***Projected Return ($ (%))***: This column summarizes the gain/loss of an investor if they were to sell all the shares they owned at the End Date price for ***each owned FAANG stock***. There are two figures per cell in this column; one is the dollar amount and the other is the percentage relative to the Starting Cash. Gain is color coded with green, while red indicates a loss. Orange indicates a neutral standing.
+
+    - **Per Stock Returns:** This option in the drop down menu generates a table summarizing the cash outlook of each investor based on each of the FAANG stocks. In other words, this information is a mixture of the Cash State and the Trade Actions provided on a per stock basis. Following columns are included in this table. Let's take a look at each of the columns in this table to get a clearer understanding of the information presented.
+        - ***Investor***: Includes the name of investors.
+        - ***Ticker***: The ticker symbol of the FAANG stock.
+        - ***Start Date***: This is the date of the first trade transaction for an investor. We expect this to be the same for all investors to allow a fair comparison.
+        - ***End Date***: This is the last date on the transaction record for an investor. End Date for all investors is expected to be the same and is updated each day.
+        - ***Shares Owned***: The number of shares for a given ticker the investor currently has.
+        - ***But Total ($)***: Total dollar amount an investor has spent on buying the shares of a FAANG company with the specified ticker.
+        - ***Sell Total ($)***: Total dollar amount an investor has earned by selling the shares of a FAANG company with the specified ticker.
+        - ***Projected Return ($ (%))***: This column summarizes the gain/loss of an investor ***on a particular stock (specified by the ticker)*** if they were to sell  the shares they owned at the End Date price. There are two figures per cell in this column; one is the dollar amount and the other is the percentage relative to the Starting Cash. Gain is color coded with green, while red indicates a loss. Orange indicates a neutral standing.
 
 ## Meet the Traders
 
-There are 4 virtual traders I created each with a different investment strategy. Let's introduce each of them with the strategies they deploy on robotrader.
+There are 4 virtual traders I created each with a different investment strategy and risk tolerance. Let's meet each of them and how they trade using the robotrader.
 
-- Safe Sam
-- Optimal Owen
-- Brave Beth
-- Random Randy
+- **Safe Sam**
+
+- **Optimal Owen**
+
+- **Brave Beth**
+
+- **Random Randy**
