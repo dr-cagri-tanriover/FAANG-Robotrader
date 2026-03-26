@@ -37,12 +37,16 @@ def update_chart_display(selected_chart):
 with gr.Blocks(theme=gr.themes.Soft(), css=css) as dashboard:
     # The wrapper for everything in the launched demo.
 
-    gr.Markdown("# FAANG Robotrader - *Pursuit of Wealth by Investors Random Randy, Safe Sam, Optimal Owen & Brave Beth !*")
+    gr.Markdown("# FAANG Robotrader - *Pursuit of Wealth by 4 Virtual Investors*")
 
-    gr.Markdown("""## Watch how well four different investors each with $500K budget perform in the real world using my Robotrader based on <a href="https://huggingface.co/spaces/ML-Owl/FAANG-Pulse-AI" target="_blank">FAANG Pulse AI !</a>""")
+    gr.Markdown("""### <p align="center"><a href="https://huggingface.co/spaces/ML-Owl/FAANG-Robotrader/blob/main/README.md" target="_blank">Read the documentation</a> to learn more about the Robotrader and the investors' strategies.</p>""")
 
-    gr.Markdown("""## Be sure to <a href="https://huggingface.co/spaces/ML-Owl/FAANG-Robotrader/blob/main/README.md" target="_blank">read the documentation</a> to understand how the Robotrader works and how the 4 investors use it to make money from FAANG shares.""")
-
+    gr.Markdown("""### Watch how well the following investors each with $500K budget perform in the real world using my Robotrader based on <a href="https://huggingface.co/spaces/ML-Owl/FAANG-Pulse-AI" target="_blank">FAANG Pulse AI !</a>""")
+    
+    gr.Markdown("""- **Safe Sam -** Precision over participation""")
+    gr.Markdown("""- **Optimal Owen -** Model-calibrated balance""")
+    gr.Markdown("""- **Brave Beth -** Participation over precision""")
+    gr.Markdown("""- **Random Randy -** Chance-based benchmark""")
 
     ### 📣 Stay tuned for updates!!!""")
     

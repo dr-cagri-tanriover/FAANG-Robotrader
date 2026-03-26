@@ -255,9 +255,9 @@ class TradingEngine:
         """
         Random Randy strategy:
         - If date is the same as the last trade date in log, do nothing and exit the function. (this happens when markets are closed!)
-        - A random seed is generated using the "date" argument. 
-        - The predicted trend is randomly selected from TREND_UP, TREND_DOWN AND  NO_TRENDB. Incoming predicted_trend is ignored!
-        - else if the predicted trend is TREND_DOWN SELL 10 shares.
+        - A random seed is generated using the "date" and the "ticker"arguments. 
+        - The predicted trend is randomly selected from TREND_UP, TREND_DOWN AND  NO_TREND. Incoming predicted_trend is ignored!
+        - The number of shares to buy and sell is randomly selected within a range of 1 to 20.
         - else (if NO_TREND) HOLD the position.
 
         The BUY actions will be executed ONLY if there is enough cash available. If not, BUY as much as possible and then HOLD the position.
