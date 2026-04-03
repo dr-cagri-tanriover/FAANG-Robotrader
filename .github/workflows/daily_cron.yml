@@ -31,6 +31,7 @@ jobs:
           git pull --rebase origin main || git rebase --abort
           git add data/*.csv
           git commit -m "Daily trade update: $(date -u +'%Y-%m-%d, %T (UTC)')" || exit 0
+          git pull --rebase origin main
           git push origin main
 
       - name: Trigger HF Sync
