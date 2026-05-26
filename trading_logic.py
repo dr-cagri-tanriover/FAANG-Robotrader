@@ -5,6 +5,19 @@ import pandas as pd
 from datetime import datetime, timedelta
 import json
 import random
+import time
+
+
+def _with_retry(fn, max_attempts=3, delay=30):
+    for attempt in range(max_attempts):
+        try:
+            return fn()
+        except Exception as e:
+            if attempt < max_attempts - 1:
+                print(f"Attempt {attempt + 1}/{max_attempts} failed: {e}. Retrying in {delay}s...")
+                time.sleep(delay)
+            else:
+                raise
 
 DATA_DIR = Path(__file__).parent / "data"
 
@@ -14,7 +27,7 @@ class TradingEngine:
     def __init__(self):
 
         self.ticker_map = {"AAPL": "APPLE", "AMZN": "AMAZON", "GOOG": "GOOGLE", "NFLX": "NETFLIX", "META": "META (a.k.a. Facebook)"}
-        self.api_client = Client("ML-Owl/FAANG-Pulse-AI")
+        self.api_client = _with_retry(lambda: Client("ML-Owl/FAANG-Pulse-AI"))
 
         with open(TRADER_ATTRIBUTES_FILE, 'r') as f:
             self.trader_attributes = json.load(f)
@@ -26,11 +39,11 @@ class TradingEngine:
     def get_stock_prices(self, tickers:list[str], date:str):
         #tickers_list = self.ticker_map.keys()  # tickers for all supported stocks
         
-        result = self.api_client.predict(
+        result = _with_retry(lambda: self.api_client.predict(
             stock_ticker_list=tickers,
             date_selected=date,
             api_name="/get_prices_on_date"
-        )
+        ))
 
         return result
 

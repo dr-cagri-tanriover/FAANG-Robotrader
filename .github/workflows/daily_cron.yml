@@ -21,8 +21,11 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # uv run automatically handles the virtual env for your script
-          uv run trading_logic.py
+          for i in 1 2 3; do
+            uv run trading_logic.py && break
+            echo "Attempt $i failed. Retrying in 60s..."
+            sleep 60
+          done
 
       - name: Commit and Push Trade Data
         run: |
