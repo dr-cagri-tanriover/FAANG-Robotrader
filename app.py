@@ -34,7 +34,7 @@ def update_chart_display(selected_chart):
     return gr.update(value=new_table_value, label=new_table_label)
 
 
-with gr.Blocks(theme=gr.themes.Soft(), css=css) as dashboard:
+with gr.Blocks() as dashboard:
     # The wrapper for everything in the launched demo.
 
     gr.Markdown("# FAANG Robotrader - *Pursuit of Wealth by 4 Virtual Investors*")
@@ -82,5 +82,5 @@ with gr.Blocks(theme=gr.themes.Soft(), css=css) as dashboard:
         api_visibility="private"  # not exposed as public API
     )
 
-    dashboard.launch()
+    dashboard.launch(theme=gr.themes.Soft(), css=css, ssr_mode=False)
 
