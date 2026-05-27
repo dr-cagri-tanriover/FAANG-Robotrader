@@ -54,6 +54,7 @@ There is no automated test suite — validation is done through backtesting and 
 - **HOLD fallback** — any BUY/SELL that would exceed available cash or shares falls back to HOLD automatically.
 - **Random Randy** — uses `seed = hash(date_str + ticker)` for deterministic randomness; serves as the control benchmark to measure ML model value.
 - **External ML API** — called via `gradio-client`; the Hugging Face Space URL is configured in `trading_logic.py`.
+- **Transient timeout retry** — `_with_retry(fn, max_attempts=3, delay=30)` at the top of `trading_logic.py` wraps both `Client(...)` construction and `api_client.predict(...)` calls. The HF Space is sometimes cold/sleeping at cron time, causing `httpx.ReadTimeout`; this retries up to 3 times with 30s gaps before propagating the error. The workflow step also wraps `uv run trading_logic.py` in a bash retry loop (3 attempts, 60s gap) as a second layer of defence.
 
 ### The 4 Investors
 
