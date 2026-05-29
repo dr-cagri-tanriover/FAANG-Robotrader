@@ -48,6 +48,14 @@ class TradingEngine:
         return result
 
 
+    def upload_logfile(self):
+        result = _with_retry(lambda: self.api_client.predict(
+            api_name="/upload_logfile"
+        ))
+        print(f"Log file upload result: {result}")
+        return result
+
+
     def get_sellable_shares(self, df_log:pd.DataFrame, ticker:str):
         # Returns the number of shares than can be sold for a stock in the portfolio.
         # Works as expected even when "ticker" is absent in df_log ! (i.e., returns 0)
@@ -325,6 +333,9 @@ def live_trading():
     # Run trade execution logic using stock_prices
     trading_engine.run_trade_execution(stock_prices)
 
+    # Trigger HF Space to upload the updated trade log
+    trading_engine.upload_logfile()
+
 
 def test_trading():
     
@@ -351,8 +362,16 @@ def test_trading():
         print(f"Day {day_counter} of {num_days_to_trade} completed.")
 
 
+def test_upload_logfile():
+    trading_engine = TradingEngine()
+    print("Testing upload_logfile API call...")
+    result = trading_engine.upload_logfile()
+    print(f"Upload result: {result}")
+
+
 if __name__ == "__main__":
 
     live_trading()
     #test_trading()
+    #test_upload_logfile()
 
