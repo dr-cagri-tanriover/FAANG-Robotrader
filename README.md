@@ -143,3 +143,12 @@ There are 4 virtual traders in Robotrader each with a different investment strat
     - If the random outcome is **NO_TREND**, he holds the position.  
 
     Randy caps each buy or sell transaction at 20 shares per stock to keep the strategy bounded and comparable to the others. If his random outcome is anything other than **NO_TREND**, he always executes at least one trade. In effect, *Randy serves as the app’s experimental benchmark*: if a machine learning-driven trader cannot consistently outperform Randy over time, that raises an important question about whether the model is providing real value at all.
+
+## Citation
+
+Use DOI: 10.5281/zenodo.20618232 if you would like to cite this work.
+
+Alternatively, please use the citation format below:
+
+APA Format: Tanriover, C. (2026). FAANG-Robotrader Application v1.0.0 (v1.0.0). https://doi.org/10.5281/zenodo.20618233
+
