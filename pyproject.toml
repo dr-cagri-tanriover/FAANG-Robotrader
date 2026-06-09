@@ -1,7 +1,7 @@
 [project]
 name = "faang-robotrader"
-version = "0.1.0"
-description = "Add your description here"
+version = "1.0.0"
+description = "Automated AI-driven virtual trading simulator benchmarking the FAANG Pulse AI model across four investor personas"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
